@@ -12,7 +12,7 @@ end
 function GetWaveFiles(path)
   local waveFiles = {}
   nfiles, files = ultraschall.GetAllFilenamesInPath(path)
-  for f=1,nfiles do
+ for f=1,nfiles do
     if (files[f]):sub(-4) == ".wav" then
       table.insert(waveFiles, files[f])
     end
