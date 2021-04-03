@@ -1,4 +1,4 @@
-function Buffy(play_pos, a, b, f, l, n, p, r, s)
+function Buffy(play_pos, a, b, cut, f, l, n, p, r, s)
   --------------------------------------------------------------------------------
   -- INIT
   --------------------------------------------------------------------------------
@@ -46,12 +46,12 @@ function Buffy(play_pos, a, b, f, l, n, p, r, s)
     local clone_end = clone_pos + clone_len
     
     -- create grain
-    local cur_pos_ms = math.random(math.floor(clone_pos*1000), math.floor(clone_end*1000))
-    reaper.SetEditCurPos2(0, cur_pos_ms/1000, false, false)
-    reaper.Main_OnCommand(40757, 0)
     local grain = clone
     local grain_len = l[i]
-    if grain_len ~= -1 then
+    if cut == true then
+      local cur_pos_ms = math.random(math.floor(clone_pos*1000), math.floor(clone_end*1000))
+      reaper.SetEditCurPos2(0, cur_pos_ms/1000, false, false)
+      reaper.Main_OnCommand(40757, 0) -- Item: Split items at edit cursor (no change selection)
       reaper.SetEditCurPos2(0, (cur_pos_ms + grain_len)/1000, false, false)
       reaper.Main_OnCommand(40757, 0)
       local left = reaper.GetSelectedMediaItem(0, 0)
@@ -61,7 +61,11 @@ function Buffy(play_pos, a, b, f, l, n, p, r, s)
       if right ~= nil then
         reaper.DeleteTrackMediaItem(track, right)
       end
+    else
+      reaper.SetMediaItemLength(grain, l[i]/1000, false)
     end
+
+    -- position
     local grain_pos = p[i]
     reaper.SetMediaItemPosition(grain, grain_pos/1000, false)
 
