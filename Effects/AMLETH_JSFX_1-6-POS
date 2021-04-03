@@ -1,0 +1,71 @@
+desc:1-6-POS
+slider1:position=0<0,5.99,0.01>سداسي
+
+in_pin:input 1/1
+out_pin:output 0
+out_pin:output 1
+out_pin:output 2
+out_pin:output 3
+out_pin:output 4
+out_pin:output 5
+
+@init
+last_gain_0=0;
+last_gain_1=0;
+last_gain_2=0;
+last_gain_3=0;
+last_gain_4=0;
+last_gain_5=0;
+
+@slider
+next_gain_0 = 0;
+pan = position - position % 6;
+(0 <= position && position < 1) ? (
+  next_gain_0 = 1 - pan;
+  next_gain_1 = pan;
+);
+(1 <= position && position < 2) ? (
+  next_gain_1 = 1 - pan;
+  next_gain_2 = pan;
+);
+(2 <= position && position < 3) ? (
+  next_gain_2 = 1 - pan;
+  next_gain_3 = pan;
+);
+(3 <= position && position < 4) ? (
+  next_gain_3 = 1 - pan;
+  next_gain_4 = pan;
+);
+(4 <= position && position < 5) ? (
+  next_gain_4 = 1 - pan;
+  next_gain_5 = pan;
+);
+(5 <= position && position < 6) ? (
+  next_gain_5 = 1 - pan;
+  next_gain_0 = pan;
+);
+
+@block
+d_gain_0 = (next_gain_0 - last_gain_0)/samplesblock;
+d_gain_1 = (next_gain_1 - last_gain_1)/samplesblock;
+d_gain_2 = (next_gain_2 - last_gain_2)/samplesblock;
+d_gain_3 = (next_gain_3 - last_gain_3)/samplesblock;
+d_gain_4 = (next_gain_4 - last_gain_4)/samplesblock;
+d_gain_5 = (next_gain_5 - last_gain_5)/samplesblock;
+
+@sample
+in = spl0;
+spl0 = 0;
+spl0 = in * last_gain_0;
+spl1 = in * last_gain_1;
+spl2 = in * last_gain_2;
+spl3 = in * last_gain_3;
+spl4 = in * last_gain_4;
+spl5 = in * last_gain_5;
+last_gain_0 += d_gain_0;
+last_gain_1 += d_gain_1;
+last_gain_2 += d_gain_2;
+last_gain_3 += d_gain_3;
+last_gain_4 += d_gain_4;
+last_gain_5 += d_gain_5;
+
